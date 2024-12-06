@@ -1,24 +1,26 @@
 use std::fs::File;
+use std::io;
 use std::process::exit;
 use xml::reader::{EventReader, XmlEvent};
 
-fn main() {
-    let file_path = "./docs.gl/gl4/glClear.xhtml";
-
-    // returns result -> result has unwrap or else function so throw custom error
-    let file = File::open("./docs.gl/gl4/glClear.xhtml").unwrap_or_else(|err| {
-        eprintln!("ERROR: could not read file {file_path}: {err}");
-        exit(1);
-    });
+fn read_entire_xml_file(file_path: &str) -> io::Result<String> {
+    // returns result ? unwrapps result
+    let file = File::open(file_path)?;
     let er = EventReader::new(file);
 
+    let mut content = String::new();
     for event in er.into_iter() {
-        let event = event.unwrap_or_else(|err| {
-            eprintln!("ERROR: could not read next XML event: {err}");
-            exit(1);
-        });
-        if let XmlEvent::Characters(text) = event {
-            println!("{text}");
+        if let XmlEvent::Characters(text) = event.expect("TODO") {
+            content.push_str(&text);
         }
     }
+    Ok(content)
+}
+
+fn main() {
+    let dir_path = "./docs.gl/gl4";
+    /*println!(
+        "{content}",
+        content = read_entire_xml_file(dir_path).expect("TODO")
+    );*/
 }
