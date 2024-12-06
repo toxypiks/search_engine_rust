@@ -1,4 +1,4 @@
-use std::fs::File;
+use std::fs::{self, File};
 use std::io;
 use std::process::exit;
 use xml::reader::{EventReader, XmlEvent};
@@ -17,10 +17,15 @@ fn read_entire_xml_file(file_path: &str) -> io::Result<String> {
     Ok(content)
 }
 
-fn main() {
+fn main() -> io::Result<()> {
     let dir_path = "./docs.gl/gl4";
+    let dir = fs::read_dir(dir_path)?;
+    for file in dir {
+        println!("{file:?}");
+    }
     /*println!(
-        "{content}",
-        content = read_entire_xml_file(dir_path).expect("TODO")
+            "{content}",
+            content = read_entire_xml_file(dir_path).expect("TODO")
     );*/
+    Ok(())
 }
