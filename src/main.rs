@@ -1,9 +1,10 @@
 use std::fs::{self, File};
 use std::io;
+use std::path::Path;
 use std::process::exit;
 use xml::reader::{EventReader, XmlEvent};
 
-fn read_entire_xml_file(file_path: &str) -> io::Result<String> {
+fn read_entire_xml_file<P: AsRef<Path>>(file_path: P) -> io::Result<String> {
     // returns result ? unwrapps result
     let file = File::open(file_path)?;
     let er = EventReader::new(file);
@@ -21,7 +22,9 @@ fn main() -> io::Result<()> {
     let dir_path = "./docs.gl/gl4";
     let dir = fs::read_dir(dir_path)?;
     for file in dir {
-        println!("{file:?}");
+        let file_path = file?.path();
+        let content = read_entire_xml_file(&file_path)?;
+        println!("{file_path:?} => {size}", size = content.len());
     }
     /*println!(
             "{content}",
